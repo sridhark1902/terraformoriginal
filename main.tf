@@ -23,7 +23,8 @@ resource "aws_internet_gateway" "default" {
 resource "aws_subnet" "subnet1-public" {
     vpc_id = "${aws_vpc.default.id}"
     cidr_block = "${var.public_subnet1_cidr}"
-    availability_zone = "${var.azs}"
+    availability_zone = "${var.azs1}"
+    	
 
     tags = {
         Name = "${var.public_subnet1_name}"
@@ -33,7 +34,8 @@ resource "aws_subnet" "subnet1-public" {
 resource "aws_subnet" "subnet2-public" {
     vpc_id = "${aws_vpc.default.id}"
     cidr_block = "${var.public_subnet2_cidr}"
-    availability_zone = "us-east-1b"
+    availability_zone = "${var.azs2}"
+    	
 
     tags = {
         Name = "${var.public_subnet2_name}"
@@ -43,7 +45,8 @@ resource "aws_subnet" "subnet2-public" {
 resource "aws_subnet" "subnet3-public" {
     vpc_id = "${aws_vpc.default.id}"
     cidr_block = "${var.public_subnet3_cidr}"
-    availability_zone = "us-east-1c"
+    availability_zone = "${var.azs3}"
+    
 
     tags = {
         Name = "${var.public_subnet3_name}"
@@ -92,7 +95,7 @@ resource "aws_security_group" "allow_all" {
 
 #data "aws_ami" "my_ami" {
 #    most_recent      = true
-#   #name_regex       = "^mavrick"
+#   #name_regex       = "^sridhark"
 #     owners           = ["721834156908"]
 #}
 
@@ -105,15 +108,20 @@ resource "aws_security_group" "allow_all" {
 #}
 
 
-# resource "aws_instance" "web-1" {
-#     ami = "${data.aws_ami.my_ami.id}"
-#     #ami = "ami-0d857ff0f5fc4e03b"
+#resource "aws_instance" "web-1" {
+#    #ami = "${data.aws_ami.my_ami.id}"
+#     ami = "ami-08bc77a2c7eb2b1da"
 #     availability_zone = "us-east-1a"
 #     instance_type = "t2.micro"
-#     key_name = "LaptopKey"
-#     subnet_id = "${aws_subnet.subnet1-public.id}"
+#     key_name = "laptop"
+#    subnet_id = "${aws_subnet.subnet1-public.id}"
 #     vpc_security_group_ids = ["${aws_security_group.allow_all.id}"]
 #     associate_public_ip_address = true	
+#     user_data = <<-EOF
+##!/bin/bash
+#apt-get update
+#apt-get install nginx -y
+#EOF
 #     tags = {
 #         Name = "Server-1"
 #         Env = "Prod"
