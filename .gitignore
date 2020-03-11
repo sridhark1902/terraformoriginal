@@ -2,3 +2,4 @@
 *.exe
 *.tfstate
 *.tfstate.backup
+*.pem

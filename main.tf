@@ -11,6 +11,7 @@ resource "aws_vpc" "default" {
     tags = {
         Name = "${var.vpc_name}"
     }
+    depends_on = ["aws_s3_bucket.bucket-1"]
 }
 
 resource "aws_internet_gateway" "default" {
@@ -20,39 +21,32 @@ resource "aws_internet_gateway" "default" {
     }
 }
 
-resource "aws_subnet" "subnet1-public" {
-    vpc_id = "${aws_vpc.default.id}"
-    cidr_block = "${var.public_subnet1_cidr}"
-    availability_zone = "${var.azs1}"
-    	
+resource "aws_s3_bucket" "bucket-1" {
+  bucket = "sripallavi0010"
+  acl    = "private"
 
-    tags = {
-        Name = "${var.public_subnet1_name}"
-    }
+  tags = {
+    Name        = "My bucket"
+    Environment = "test"
+  }
 }
 
-resource "aws_subnet" "subnet2-public" {
-    vpc_id = "${aws_vpc.default.id}"
-    cidr_block = "${var.public_subnet2_cidr}"
-    availability_zone = "${var.azs2}"
-    	
 
-    tags = {
-        Name = "${var.public_subnet2_name}"
-    }
-}
 
-resource "aws_subnet" "subnet3-public" {
+
+resource "aws_subnet" "subnets" {
+    count = "${length(var.cidrs)}"
     vpc_id = "${aws_vpc.default.id}"
-    cidr_block = "${var.public_subnet3_cidr}"
-    availability_zone = "${var.azs3}"
+    availability_zone = "${element(var.azs, count.index)}"
+    cidr_block = "${element(var.cidrs, count.index)}"
+	map_public_ip_on_launch = true
     
-
     tags = {
-        Name = "${var.public_subnet3_name}"
+        Name = "${var.vpc_name}-subnet-${count.index+1}"
+        Owner = "Infosys"
     }
-	
 }
+
 
 
 resource "aws_route_table" "terraform-public" {
@@ -68,8 +62,11 @@ resource "aws_route_table" "terraform-public" {
     }
 }
 
+
+
 resource "aws_route_table_association" "terraform-public" {
-    subnet_id = "${aws_subnet.subnet1-public.id}"
+    count = "${length(var.cidrs)}"
+    subnet_id = "${element(aws_subnet.subnets.*.id, count.index)}"
     route_table_id = "${aws_route_table.terraform-public.id}"
 }
 
@@ -93,45 +90,54 @@ resource "aws_security_group" "allow_all" {
     }
 }
 
+
 #data "aws_ami" "my_ami" {
 #    most_recent      = true
 #   #name_regex       = "^sridhark"
 #     owners           = ["721834156908"]
 #}
 
-#terraform {
-# backend "s3" {
-# bucket = "sripallavi007"
-# region = "us-east-1"
-# key = "terraform1.state"
-# }
-#}
+terraform {
+backend "s3" {
+bucket = "sripallavi0010"
+region = "us-east-1"
+key = "terraform10.state"
+}
+}
 
 
-#resource "aws_instance" "web-1" {
-#    #ami = "${data.aws_ami.my_ami.id}"
-#     ami = "ami-08bc77a2c7eb2b1da"
-#     availability_zone = "us-east-1a"
-#     instance_type = "t2.micro"
-#     key_name = "laptop"
-#    subnet_id = "${aws_subnet.subnet1-public.id}"
-#     vpc_security_group_ids = ["${aws_security_group.allow_all.id}"]
-#     associate_public_ip_address = true	
-#     user_data = <<-EOF
-##!/bin/bash
-#apt-get update
-#apt-get install nginx -y
-#EOF
-#     tags = {
-#         Name = "Server-1"
-#         Env = "Prod"
-#         Owner = "Sree"
-#     }
-# }
+# resource "aws_instance" "web-1" {
+#     count = "${length(var.cidrs)}"
+#     #ami = "${data.aws_ami.my_ami.id}"
+#      ami =  "${lookup (var.amis, var.aws_region)}"
+#      availability_zone = "${element(var.azs, count.index)}"
+#      instance_type = "t2.micro"
+#      key_name = "${var.key_name}"
+#     subnet_id = "${element(aws_subnet.subnets.*.id, count.index)}"
+#     #subnet_id = "${element(aws_subnet.subnets.*.id, count.index)}"
+#      vpc_security_group_ids = ["${aws_security_group.allow_all.id}"]
+#      associate_public_ip_address = true	
+#      user_data = <<-EOF
+# #!/bin/bash
+# yum update -y
+# yum  install nginx -y
+# service nginx start
+# EOF
+#      tags = {
+#          Name = "Server-${count.index+1}"
+#          Env = "Prod"
+#          Owner = "Sree"
+#      }
+#  }
 
-#output "ami_id" {
+
+ 
+
+
+
+# output "ami_id" {
 #  value = "${data.aws_ami.my_ami.id}"
-#}
+# }
 #!/bin/bash
 # echo "Listing the files in the repo."
 # ls -al
