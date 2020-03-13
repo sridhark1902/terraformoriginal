@@ -18,7 +18,7 @@ output "IGW-id" {
  value = "${aws_internet_gateway.default.id}"
 }
 
-output "bucket-name" {
- value = "${aws_s3_bucket.bucket-1.tags.Name}"
-}
+# output "bucket-name" {
+#  value = "${aws_s3_bucket.bucket-1.tags.Name}"
+# }
 
