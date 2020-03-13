@@ -5,9 +5,9 @@ variable "amis" {
     description = "AMIs by region"
     default = {
     us-east-1 = "ami-08bc77a2c7eb2b1da" # ubuntu 16.04 LTS
-		us-east-2 = "ami-08cec7c429219e339" # ubuntu 16.04 LTS
-		us-east-1 = "ami-0e2ff28bfb72a4e45" # Amazon Linux 
-		us-east-2 = "ami-0998bf58313ab53da" # Amazon Linux 
+		# us-east-2 = "ami-08cec7c429219e339" # ubuntu 16.04 LTS
+		# us-east-1 = "ami-0e2ff28bfb72a4e45" # Amazon Linux 
+		# us-east-2 = "ami-0998bf58313ab53da" # Amazon Linux 
     }
 }
 variable "vpc_cidr" {}

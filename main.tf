@@ -11,7 +11,7 @@ resource "aws_vpc" "default" {
     tags = {
         Name = "${var.vpc_name}"
     }
-    depends_on = ["aws_s3_bucket.bucket-1"]
+    #depends_on = ["aws_s3_bucket.bucket-1"]
 }
 
 resource "aws_internet_gateway" "default" {
@@ -119,8 +119,8 @@ resource "aws_instance" "web-1" {
      associate_public_ip_address = true	
      user_data = <<-EOF
 #!/bin/bash
-yum update -y
-yum  install nginx -y
+apt update -y
+apt  install nginx -y
 service nginx start
 EOF
      tags = {
