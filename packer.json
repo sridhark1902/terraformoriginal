@@ -43,7 +43,9 @@
 	    "sudo wget https://releases.hashicorp.com/packer/1.5.1/packer_1.5.1_linux_amd64.zip",
 	    "sudo unzip packer_1.5.1_linux_amd64.zip",
 	    "sudo chmod 700 packer_1.5.1_linux_amd64.zip",
-	    "sudo mv packer /usr/local/bin",
+      "sudo mv packer /usr/local/bin",
+      
+      "sleep 10s",
 	  
       "sleep 10s",
       "sudo apt-get install openjdk-8-jdk -y",
