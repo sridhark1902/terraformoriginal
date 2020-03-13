@@ -11,7 +11,7 @@ resource "aws_vpc" "default" {
     tags = {
         Name = "${var.vpc_name}"
     }
-    #depends_on = ["aws_s3_bucket.bucket-1"]
+    depends_on = ["aws_s3_bucket.s3bucket1"]
 }
 
 resource "aws_internet_gateway" "default" {
@@ -19,17 +19,18 @@ resource "aws_internet_gateway" "default" {
 	tags = {
         Name = "${var.IGW_name}"
     }
+    depends_on = ["aws_s3_bucket.s3bucket1"]
 }
 
-# resource "aws_s3_bucket" "bucket-1" {
-#   bucket = "sripallavi0010"
-#   acl    = "private"
+resource "aws_s3_bucket" "s3bucket1" {
+  bucket = "ibmlogsbucket"
+  acl    = "private"
 
-#   tags = {
-#     Name        = "My bucket"
-#     Environment = "test"
-#   }
-# }
+  tags = {
+    Name        = "My bucket"
+    Environment = "test"
+  }
+}
 
 
 
@@ -91,25 +92,25 @@ resource "aws_security_group" "allow_all" {
 }
 
 
-#data "aws_ami" "my_ami" {
-#    most_recent      = true
-#   #name_regex       = "^sridhark"
-#     owners           = ["721834156908"]
-#}
+data "aws_ami" "my_ami" {
+   most_recent      = true
+  #name_regex       = "^sridhark"
+    owners           = ["884154499407"]
+}
 
-# terraform {
-# backend "s3" {
-# bucket = "sripallavi0010"
-# region = "us-east-1"
-# key = "terraform10.state"
-# }
-# }
+terraform {
+backend "s3" {
+bucket = "ibmlogsbucket"
+region = "us-east-1"
+key = "terraform10.state"
+}
+}
 
 
 resource "aws_instance" "web-1" {
     count = "${length(var.cidrs)}"
-    #ami = "${data.aws_ami.my_ami.id}"
-     ami =  "${lookup (var.amis, var.aws_region)}"
+    ami = "${data.aws_ami.my_ami.id}"
+     #ami =  "${lookup (var.amis, var.aws_region)}"
      availability_zone = "${element(var.azs, count.index)}"
      instance_type = "t2.micro"
      key_name = "${var.key_name}"
@@ -117,14 +118,14 @@ resource "aws_instance" "web-1" {
     #subnet_id = "${element(aws_subnet.subnets.*.id, count.index)}"
      vpc_security_group_ids = ["${aws_security_group.allow_all.id}"]
      associate_public_ip_address = true	
-     user_data = <<-EOF
-#!/bin/bash
-apt update -y
-apt  install nginx -y
-service nginx start
-EOF
+#      user_data = <<-EOF
+# #!/bin/bash
+# apt update -y
+# apt  install nginx -y
+# service nginx start
+# EOF
      tags = {
-         Name = "Server-${count.index+1}"
+         Name = "Jenkins-${count.index+1}"
          Env = "Prod"
          Owner = "Sree"
      }
