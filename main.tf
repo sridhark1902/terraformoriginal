@@ -111,29 +111,29 @@ key = "terraform10.state"
 }
 
 
-# resource "aws_instance" "web-1" {
-#     count = "${length(var.cidrs)}"
-#     ami = "${data.aws_ami.my_ami.id}"
-#      #ami =  "${lookup (var.amis, var.aws_region)}"
-#      availability_zone = "${element(var.azs, count.index)}"
-#      instance_type = "t2.micro"
-#      key_name = "${var.key_name}"
-#     subnet_id = "${element(aws_subnet.subnets.*.id, count.index)}"
-#     #subnet_id = "${element(aws_subnet.subnets.*.id, count.index)}"
-#      vpc_security_group_ids = ["${aws_security_group.allow_all.id}"]
-#      associate_public_ip_address = true	
-#      user_data = <<-EOF
-# #!/bin/bash
-# useradd -m sri740
-# mkdir /folder1
+resource "aws_instance" "web-1" {
+    count = "${length(var.cidrs)}"
+    ami = "${data.aws_ami.my_ami.id}"
+     #ami =  "${lookup (var.amis, var.aws_region)}"
+     availability_zone = "${element(var.azs, count.index)}"
+     instance_type = "t2.micro"
+     key_name = "${var.key_name}"
+    subnet_id = "${element(aws_subnet.subnets.*.id, count.index)}"
+    #subnet_id = "${element(aws_subnet.subnets.*.id, count.index)}"
+     vpc_security_group_ids = ["${aws_security_group.allow_all.id}"]
+     associate_public_ip_address = true	
+     user_data = <<-EOF
+#!/bin/bash
+useradd -m sri740
+mkdir /folder1
 
-# EOF
-#      tags = {
-#          Name = "Jenkins-${count.index+1}"
-#          Env = "Prod"
-#          Owner = "Sree"
-#      }
-#  }
+EOF
+     tags = {
+         Name = "Jenkins-${count.index+1}"
+         Env = "Prod"
+         Owner = "Sree"
+     }
+ }
 
 
  
